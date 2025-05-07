@@ -15,23 +15,30 @@ public class PrimeUtil {
     }
 
     public static BigInteger generateExponent(BigInteger phi) {
-        for (int i = 0; i < 10000; i++) {
-            BigInteger candidate = generatePrimeInRange(BigInteger.TWO, phi.subtract(BigInteger.ONE));
-            if (areCoprime(candidate, phi)) return candidate;
-        }
-        throw new IllegalStateException("No se encontró un exponente válido");
+        BigInteger candidate;
+        do {
+            candidate = generatePrimeInRange(BigInteger.TWO, phi.subtract(BigInteger.ONE));
+        } while (!areCoprime(candidate, phi));
+        return candidate;
     }
 
     public static BigInteger generatePrimeInRange(BigInteger from, BigInteger to) {
-        BigInteger range = to.subtract(from);
-        int bits = range.bitLength();
-        for (int i = 0; i < 10000; i++) {
-            BigInteger candidate = new BigInteger(bits, random).add(from);
-            if (candidate.compareTo(to) <= 0 && candidate.isProbablePrime(100)) {
-                return candidate;
-            }
+        BigInteger candidate;
+        int attempts = 0;
+        int maxAttempts = 10000;
+
+        do {
+            BigInteger range = to.subtract(from);
+            int bits = range.bitLength();
+            candidate = new BigInteger(bits, random).add(from);
+            attempts++;
+        } while ((candidate.compareTo(to) > 0 || !candidate.isProbablePrime(100)) && attempts < maxAttempts);
+
+        if (attempts >= maxAttempts) {
+            throw new IllegalStateException("No se encontró un número primo en el rango");
         }
-        throw new IllegalStateException("No se encontró un número primo en el rango");
+
+        return candidate;
     }
 
     public static BigInteger generateEuclideanInverse(BigInteger a, BigInteger b) {
@@ -48,6 +55,6 @@ public class PrimeUtil {
             s = oldS.subtract(quotient.multiply(s));
             oldS = tempS;
         }
-        return oldS;
+        return oldS.mod(b);
     }
 }
