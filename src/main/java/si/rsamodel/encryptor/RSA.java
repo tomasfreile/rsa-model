@@ -13,11 +13,11 @@ public class RSA implements MessageEncryptor<RsaKey> {
             throw new IllegalArgumentException("El mensaje no puede estar vacío.");
         }
 
-        BigInteger m = key.getPublicKey().getModulus();
+        BigInteger n = key.getPublicKey().getModulus();
         BigInteger e = key.getPublicKey().getExponent();
         BigInteger numericMessage = BigIntegerUtil.stringToBigInteger(message);
-        BigInteger messageMod = numericMessage.mod(m);
-        return messageMod.modPow(e, m);
+        BigInteger messageMod = numericMessage.mod(n);
+        return messageMod.modPow(e, n);
     }
 
     @Override
