@@ -7,6 +7,16 @@ import java.math.BigInteger;
 
 public class RSA implements MessageEncryptor<RsaKey> {
 
+    private final boolean useChineseRemainder;
+
+    public RSA() {
+        this(true); // por defecto usa CRT
+    }
+
+    public RSA(boolean useChineseRemainder) {
+        this.useChineseRemainder = useChineseRemainder;
+    }
+
     @Override
     public BigInteger encrypt(String message, RsaKey key) {
         if (message == null || message.isEmpty()) {
@@ -23,18 +33,23 @@ public class RSA implements MessageEncryptor<RsaKey> {
     @Override
     public String decrypt(BigInteger cipherText, RsaKey key) {
         BigInteger d = key.getPrivateKey().getInverse();
+        BigInteger n = key.getPublicKey().getModulus();
 
+        if (!useChineseRemainder) {
+            // Metodo clásico: c^d mod n
+            return BigIntegerUtil.bigIntegerToString(cipherText.modPow(d, n));
+        }
+
+        // Metodo CRT: más eficiente
         BigInteger p = key.getPrivateKey().getP();
         BigInteger q = key.getPrivateKey().getQ();
 
         BigInteger m1 = cipherText.modPow(d, p);
-
         BigInteger m2 = cipherText.modPow(d, q);
 
-        BigInteger qInv = q.modInverse(p); // q⁻¹ mod p
+        BigInteger qInv = q.modInverse(p);
         BigInteger h = (m1.subtract(m2)).multiply(qInv).mod(p);
-
-        BigInteger m = m2.add(h.multiply(q)); // m ≡ m2 + h * q mod n
+        BigInteger m = m2.add(h.multiply(q));
 
         return BigIntegerUtil.bigIntegerToString(m);
     }
