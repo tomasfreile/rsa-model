@@ -86,7 +86,7 @@ El siguiente ejemplo muestra cómo generar un par de claves, encriptar un mensaj
 public class Main {
     public static void main(String[] args) {
         // Generamos las claves
-        RSAKeyGenerator keyGen = new RSAKeyGenerator(512);  // Tamaño de los primos: 1024 bits
+        RSAKeyGenerator keyGen = new RSAKeyGenerator(1024);  // Tamaño de los primos: 1024 bits
         RsaKey key = (RsaKey) keyGen.generateKey();  // Generamos la clave pública y privada
 
         // Creamos el objeto RSA para encriptar y desencriptar
