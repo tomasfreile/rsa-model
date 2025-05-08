@@ -21,10 +21,21 @@ public class RSA implements MessageEncryptor<RsaKey> {
     }
 
     @Override
-    public String decrypt(BigInteger message, RsaKey key) {
+    public String decrypt(BigInteger cipherText, RsaKey key) {
         BigInteger d = key.getPrivateKey().getInverse();
-        BigInteger m = key.getPublicKey().getModulus();
-        BigInteger decrypted = message.modPow(d, m);
-        return BigIntegerUtil.bigIntegerToString(decrypted);
+
+        BigInteger p = key.getPrivateKey().getP();
+        BigInteger q = key.getPrivateKey().getQ();
+
+        BigInteger m1 = cipherText.modPow(d, p);
+
+        BigInteger m2 = cipherText.modPow(d, q);
+
+        BigInteger qInv = q.modInverse(p); // q⁻¹ mod p
+        BigInteger h = (m1.subtract(m2)).multiply(qInv).mod(p);
+
+        BigInteger m = m2.add(h.multiply(q)); // m ≡ m2 + h * q mod n
+
+        return BigIntegerUtil.bigIntegerToString(m);
     }
 }

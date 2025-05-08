@@ -13,7 +13,7 @@ public class Main {
 
         RSA rsa = new RSA();
 
-        String message = "Hello world!";
+        String message = "This is a test message for RSA encryption";
         BigInteger encrypted = rsa.encrypt(message, key);
         String decrypted = rsa.decrypt(encrypted, key);
 

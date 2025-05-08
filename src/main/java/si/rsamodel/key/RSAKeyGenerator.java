@@ -25,6 +25,6 @@ public class RSAKeyGenerator implements KeyGenerator<RsaPublicKey, RsaPrivateKey
         if (d.compareTo(BigInteger.ZERO) < 0) d = d.add(phi);
         else if (d.compareTo(phi) >= 0) d = d.subtract(phi);
 
-        return new RsaKey(new RsaPublicKey(n, e), new RsaPrivateKey(d));
+        return new RsaKey(new RsaPublicKey(n, e), new RsaPrivateKey(d, p, q));
     }
 }
