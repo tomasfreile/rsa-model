@@ -1,6 +1,8 @@
 package si.rsamodel;
 
+import si.rsamodel.encryptor.ChineseRemainderDecryptStrategy;
 import si.rsamodel.encryptor.RSA;
+import si.rsamodel.encryptor.StandardDecryptStrategy;
 import si.rsamodel.key.RSAKeyGenerator;
 import si.rsamodel.model.RsaKey;
 
@@ -8,24 +10,23 @@ import java.math.BigInteger;
 
 public class Main {
     public static void main(String[] args) {
-        RSAKeyGenerator keyGen = new RSAKeyGenerator(2048); // claves más grandes para ver diferencia
+        RSAKeyGenerator keyGen = new RSAKeyGenerator(2048);
         RsaKey key = (RsaKey) keyGen.generateKey();
 
         String message = "This is a test message for RSA encryption";
         BigInteger encrypted;
 
         // Encriptar una vez
-        RSA rsaEncryptor = new RSA();
-        encrypted = rsaEncryptor.encrypt(message, key);
+        RSA rsaWithoutCRT = new RSA(new StandardDecryptStrategy());
+        encrypted = rsaWithoutCRT.encrypt(message, key);
 
         // Desencriptar con CRT
-        RSA rsaWithCRT = new RSA(true);
+        RSA rsaWithCRT = new RSA(new ChineseRemainderDecryptStrategy());
         long startWithCRT = System.nanoTime();
         String decryptedWithCRT = rsaWithCRT.decrypt(encrypted, key);
         long durationWithCRT = System.nanoTime() - startWithCRT;
 
         // Desencriptar sin CRT
-        RSA rsaWithoutCRT = new RSA(false);
         long startWithoutCRT = System.nanoTime();
         String decryptedWithoutCRT = rsaWithoutCRT.decrypt(encrypted, key);
         long durationWithoutCRT = System.nanoTime() - startWithoutCRT;

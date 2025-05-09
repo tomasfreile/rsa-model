@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Test;
+import si.rsamodel.encryptor.ChineseRemainderDecryptStrategy;
 import si.rsamodel.encryptor.RSA;
 import si.rsamodel.key.RSAKeyGenerator;
 import si.rsamodel.model.RsaKey;
@@ -9,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RsaEncryptorTest {
 
-    private final RSA rsa = new RSA();
+    private final RSA rsa = new RSA(new ChineseRemainderDecryptStrategy());
     private final RsaKey key = (RsaKey) new RSAKeyGenerator(1024).generateKey();
 
     @Test
